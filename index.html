@@ -36,28 +36,127 @@ body {
 }
 .app { max-width: 1280px; margin: 0 auto; padding: 40px 32px 60px; }
 
+/* ============ COLLECTION HEADER ============ */
+.collection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding: 18px 24px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  flex-wrap: wrap;
+}
+.collection-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.collection-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #a78bfa, #6b4df5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.collection-avatar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 60%);
+}
+.collection-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+.collection-info { min-width: 0; }
+.collection-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.verified-badge {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.collection-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+.collection-meta .dot-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+}
+.collection-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.network-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.network-tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 8px var(--lime);
+}
+
+@media (max-width: 640px) {
+  .collection-header { padding: 14px 16px; border-radius: 14px; }
+  .collection-avatar { width: 44px; height: 44px; border-radius: 11px; }
+  .collection-title { font-size: 17px; }
+  .collection-meta { font-size: 11px; gap: 8px; }
+}
+
+/* ===================== HERO ===================== */
 .top-header {
   display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 40px; margin-bottom: 40px; flex-wrap: wrap;
+  gap: 40px; margin-bottom: 32px; flex-wrap: wrap;
 }
 .top-header h1 {
-  font-size: clamp(48px, 6vw, 76px);
+  font-size: clamp(42px, 5.4vw, 68px);
   font-weight: 800; letter-spacing: -0.04em; line-height: 0.95;
   max-width: 620px;
 }
 .top-right { display: flex; align-items: center; gap: 20px; padding-top: 14px; }
-.badge-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 16px; border-radius: 999px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.badge-pill::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--lime); box-shadow: 0 0 8px var(--lime);
-}
 .top-right-text {
   font-size: 14px; font-weight: 500; line-height: 1.5;
   color: rgba(255,255,255,0.85); max-width: 220px;
@@ -72,6 +171,7 @@ body {
   .top-header { flex-direction: column; gap: 20px; }
 }
 
+/* ===================== GALLERY ===================== */
 .gallery {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
@@ -94,8 +194,19 @@ body {
   overflow: hidden;
   transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.25s;
   cursor: pointer;
-  background: linear-gradient(135deg, #4a6fa5, #2d3e5f);
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.nft-item.loaded {
+  animation: none;
+  background: none;
+  border: none;
 }
 .nft-item:hover {
   transform: translateY(-4px) scale(1.03);
@@ -107,13 +218,11 @@ body {
   object-fit: cover;
   display: block;
   image-rendering: crisp-edges;
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
-.nft-item .placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: clamp(28px, 3.4vw, 44px);
-  background: linear-gradient(135deg, #4a6fa5, #2d3e5f);
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+.nft-item.loaded img {
+  opacity: 1;
 }
 .nft-item .num-badge {
   position: absolute;
@@ -128,6 +237,7 @@ body {
 }
 .nft-item:hover .num-badge { opacity: 1; }
 
+/* ===================== MINT CARD ===================== */
 .mint-card {
   background: var(--card);
   border-radius: 24px;
@@ -481,10 +591,34 @@ body {
 
 <div class="app">
 
+  <!-- ============ COLLECTION HEADER ============ -->
+  <div class="collection-header">
+    <div class="collection-left">
+      <div class="collection-avatar" id="headerAvatar"></div>
+      <div class="collection-info">
+        <div class="collection-title">
+          ARC Ape Goblin
+          <svg class="verified-badge" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L14.5 4.5L18 4L18.5 7.5L22 9L20.5 12L22 15L18.5 16.5L18 20L14.5 19.5L12 22L9.5 19.5L6 20L5.5 16.5L2 15L3.5 12L2 9L5.5 7.5L6 4L9.5 4.5L12 2Z" fill="#DDFB6F"/>
+            <path d="M10.5 15L8 12.5L8.7 11.8L10.5 13.6L15.3 8.8L16 9.5L10.5 15Z" fill="#0a0a1f"/>
+          </svg>
+        </div>
+        <div class="collection-meta">
+          <span><b id="headerCount" style="color:#fff;">—</b> items</span>
+          <span class="dot-sep"></span>
+          <span>Arc Network</span>
+        </div>
+      </div>
+    </div>
+    <div class="collection-right">
+      <div class="network-tag">On Arc</div>
+    </div>
+  </div>
+
+  <!-- ============ HERO ============ -->
   <div class="top-header">
     <h1>Meet your next<br>little obsession.</h1>
     <div class="top-right">
-      <div class="badge-pill">On Arc</div>
       <div class="top-right-text">
         A tribe of pixel apes.<br>Find a home for yours.
       </div>
@@ -515,12 +649,12 @@ body {
 
       <div class="info-grid">
         <div class="info-cell">
-          <div class="info-label">Price per NFT</div>
-          <div class="info-value skeleton" id="infoPrice"></div>
+          <div class="info-label">Free per wallet</div>
+          <div class="info-value skeleton" id="infoFree"></div>
         </div>
         <div class="info-cell">
-          <div class="info-label">Per wallet</div>
-          <div class="info-value skeleton" id="infoFree"></div>
+          <div class="info-label">Max per tx</div>
+          <div class="info-value skeleton" id="infoMaxTx"></div>
         </div>
       </div>
 
@@ -601,15 +735,13 @@ body {
 
 <script>
 // ===================================================================
-// CONFIG — EDIT THESE
+// CONFIG
 // ===================================================================
 const CONTRACT_ADDRESS = "0x36607159275ed66b20e96bb5c229a0161e374f23";
 const COLLECTION_NAME = "ARC Ape Goblin";
 
-// IPFS CID của bộ sưu tập
 const IPFS_CID = "bafybeihslvelqylonhmxxedmpwkxfqbleqgwsmcqastpxzybumugs3acvi";
 
-// Danh sách gateway — tự động fallback nếu gateway trước lỗi
 const IPFS_GATEWAYS = [
   "https://" + IPFS_CID + ".ipfs.inbrowser.link/",
   "https://ipfs.io/ipfs/" + IPFS_CID + "/",
@@ -617,11 +749,10 @@ const IPFS_GATEWAYS = [
   "https://gateway.pinata.cloud/ipfs/" + IPFS_CID + "/",
 ];
 
-// Số NFT hiển thị trong gallery
 const GALLERY_COUNT = 25;
 
 // ===================================================================
-// ARC MAINNET — HARDCODED
+// ARC MAINNET
 // ===================================================================
 const ARC_CHAIN_ID = 5042;
 const ARC_CHAIN_ID_HEX = "0x13b2";
@@ -639,9 +770,6 @@ const ARC_NETWORK_PARAMS = {
   blockExplorerUrls: [ARC_EXPLORER],
 };
 
-// ===================================================================
-// ABI
-// ===================================================================
 const ABI = [
   "function mint(uint256 numberOfTokens) external payable",
   "function totalSupply() view returns (uint256)",
@@ -673,8 +801,8 @@ const state = {
 const $ = (id) => document.getElementById(id);
 const nftGrid = $("nftGrid");
 const salePill = $("salePill");
-const infoPrice = $("infoPrice");
 const infoFree = $("infoFree");
+const infoMaxTx = $("infoMaxTx");
 const progText = $("progText");
 const progFill = $("progFill");
 const progNote = $("progNote");
@@ -694,6 +822,8 @@ const walletModalClose = $("walletModalClose");
 const toastsEl = $("toasts");
 const minusBtn = $("minusBtn");
 const plusBtn = $("plusBtn");
+const headerCount = $("headerCount");
+const headerAvatar = $("headerAvatar");
 
 // ===================================================================
 // ICONS
@@ -744,25 +874,8 @@ const ICONS = {
 };
 
 // ===================================================================
-// GALLERY — load images from IPFS with multi-gateway fallback
+// GALLERY — skeleton loading, no emoji placeholders
 // ===================================================================
-const APE_EMOJIS = ["🦍", "🐵", "🙈", "🙉", "🙊", "🐒", "🦧", "👽", "🤖", "👾",
-                    "🎮", "🎨", "🔥", "💎", "⚡", "🌟", "🚀", "🎯", "🏆", "💀",
-                    "👑", "🎭", "🃏", "🎪", "🎬"];
-const GRADIENT_STYLES = [
-  "linear-gradient(135deg, #4a6fa5, #2d3e5f)",
-  "linear-gradient(135deg, #ff6b9d, #ffb84d)",
-  "linear-gradient(135deg, #4dd8ff, #7b5eff)",
-  "linear-gradient(135deg, #ffe066, #ff9a3c)",
-  "linear-gradient(135deg, #a78bfa, #6b4df5)",
-  "linear-gradient(135deg, #22d3ee, #4dd8ff)",
-  "linear-gradient(135deg, #f472b6, #c084fc)",
-  "linear-gradient(135deg, #34d399, #22d3ee)",
-  "linear-gradient(135deg, #fb7185, #f472b6)",
-  "linear-gradient(135deg, #fbbf24, #fb923c)",
-];
-
-// Thử load ảnh từ gateway. Nếu gateway[0] lỗi, thử gateway[1]...
 function loadImageWithFallback(tokenId, onSuccess, onAllFail) {
   let gatewayIndex = 0;
   const tryNext = () => {
@@ -773,10 +886,7 @@ function loadImageWithFallback(tokenId, onSuccess, onAllFail) {
     const url = `${IPFS_GATEWAYS[gatewayIndex]}${tokenId}.png`;
     const img = new Image();
     img.onload = () => onSuccess && onSuccess(img.src);
-    img.onerror = () => {
-      gatewayIndex++;
-      tryNext();
-    };
+    img.onerror = () => { gatewayIndex++; tryNext(); };
     img.src = url;
   };
   tryNext();
@@ -788,14 +898,6 @@ function renderGallery() {
     const item = document.createElement("div");
     item.className = "nft-item";
 
-    // Placeholder tạm
-    const placeholder = document.createElement("div");
-    placeholder.className = "placeholder";
-    placeholder.style.background = GRADIENT_STYLES[i % GRADIENT_STYLES.length];
-    placeholder.textContent = APE_EMOJIS[i % APE_EMOJIS.length];
-    item.appendChild(placeholder);
-
-    // Load ảnh thật với fallback
     loadImageWithFallback(
       tokenId,
       (src) => {
@@ -803,16 +905,17 @@ function renderGallery() {
         img.src = src;
         img.alt = `Ape #${tokenId}`;
         img.loading = "lazy";
-        item.innerHTML = "";
         item.appendChild(img);
+        // Trigger fade-in
+        requestAnimationFrame(() => item.classList.add("loaded"));
       },
       () => {
-        // Giữ placeholder nếu tất cả gateway lỗi
-        console.warn(`Could not load image for token #${tokenId}`);
+        // All gateways failed — keep skeleton visible
+        item.style.animation = "none";
+        item.style.background = "rgba(255,255,255,0.04)";
       }
     );
 
-    // Badge số
     const badge = document.createElement("div");
     badge.className = "num-badge";
     badge.textContent = `#${tokenId}`;
@@ -822,6 +925,23 @@ function renderGallery() {
   }
 }
 renderGallery();
+
+// Load collection avatar (token #1) into header
+function loadHeaderAvatar() {
+  loadImageWithFallback(
+    1,
+    (src) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "Collection";
+      headerAvatar.appendChild(img);
+    },
+    () => {
+      // Fallback: gradient only (no emoji)
+    }
+  );
+}
+loadHeaderAvatar();
 
 // ===================================================================
 // UTILS
@@ -922,7 +1042,7 @@ walletModal.addEventListener("click", (e) => { if (e.target === walletModal) clo
 // QUANTITY
 // ===================================================================
 function getMaxQty() {
-  if (!state.loaded) return 10;
+  if (!state.loaded) return 100;
   const contractMax = Number(state.maxMintsPerTx);
   const remaining = Number(state.maxSupply - state.totalSupply);
   return Math.min(contractMax, remaining > 0 ? remaining : 0);
@@ -978,15 +1098,15 @@ function computeCost(quantity) {
 }
 function updatePriceUI() {
   if (state.loaded) {
-    infoPrice.classList.remove("skeleton");
-    infoPrice.innerHTML = `${formatAmount(state.price)} <span class="unit">${NATIVE_SYMBOL}</span>`;
     infoFree.classList.remove("skeleton");
-    infoFree.innerHTML = `${state.maxFreePerWallet}<span class="sub">free / wallet</span>`;
+    infoFree.innerHTML = `${state.maxFreePerWallet}<span class="sub">per wallet</span>`;
+    infoMaxTx.classList.remove("skeleton");
+    infoMaxTx.innerHTML = `${state.maxMintsPerTx}<span class="sub">per tx</span>`;
   } else {
-    infoPrice.classList.add("skeleton");
-    infoPrice.innerHTML = "";
     infoFree.classList.add("skeleton");
     infoFree.innerHTML = "";
+    infoMaxTx.classList.add("skeleton");
+    infoMaxTx.innerHTML = "";
   }
 
   if (!state.loaded) {
@@ -995,13 +1115,6 @@ function updatePriceUI() {
     return;
   }
   totalValue.classList.remove("skeleton");
-
-  if (!userAddress) {
-    const cost = state.price * BigInt(selectedQty || 0);
-    totalValue.innerHTML = `${formatAmount(cost)} <span class="unit">${NATIVE_SYMBOL}</span>`;
-    totalValue.classList.remove("free");
-    return;
-  }
 
   const { isFree, totalWei } = computeCost(selectedQty);
   if (isFree) {
@@ -1033,6 +1146,10 @@ async function readState(c) {
   state.freeMinted = BigInt(freeMinted.toString());
   state.saleActive = saleActive;
   state.loaded = true;
+
+  if (headerCount) {
+    headerCount.textContent = formatNumber(state.totalSupply);
+  }
 
   const pct = state.maxSupply > 0n
     ? Number((state.totalSupply * 10000n) / state.maxSupply) / 100
@@ -1066,13 +1183,7 @@ async function loadFromRPC() {
     salePill.textContent = "Unknown";
     salePill.classList.add("off");
     salePill.classList.remove("loading");
-    infoPrice.classList.add("skeleton");
-    infoPrice.innerHTML = "";
-    infoFree.classList.add("skeleton");
-    infoFree.innerHTML = "";
-    totalValue.classList.add("skeleton");
-    totalValue.innerHTML = "";
-    toast("Failed to read contract via RPC. Check address / RPC.", "warning", 6000);
+    toast("Failed to read contract via RPC.", "warning", 6000);
   }
 }
 async function loadFromWallet() {
@@ -1089,24 +1200,18 @@ async function refreshBalance() {
 }
 
 // ===================================================================
-// CHAIN SWITCH — always Arc Mainnet
+// CHAIN SWITCH
 // ===================================================================
 async function ensureArc(raw) {
   try {
     const hex = await raw.request({ method: "eth_chainId" });
     if (parseInt(hex, 16) === ARC_CHAIN_ID) return true;
     try {
-      await raw.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: ARC_CHAIN_ID_HEX }],
-      });
+      await raw.request({ method: "wallet_switchEthereumChain", params: [{ chainId: ARC_CHAIN_ID_HEX }] });
       return true;
     } catch (e) {
       if (e.code === 4902) {
-        await raw.request({
-          method: "wallet_addEthereumChain",
-          params: [ARC_NETWORK_PARAMS],
-        });
+        await raw.request({ method: "wallet_addEthereumChain", params: [ARC_NETWORK_PARAMS] });
         return true;
       }
       throw e;
