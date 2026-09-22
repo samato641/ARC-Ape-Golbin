@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARC Ape Goblin — Mint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<style>
+:root {
+  --bg: #7B5EFF;
+  --card: #14142b;
+  --card-2: #1a1a35;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.65);
+  --muted-2: rgba(255,255,255,0.45);
+  --border: rgba(255,255,255,0.1);
+  --border-2: rgba(255,255,255,0.18);
+  --lime: #DDFB6F;
+  --lime-hover: #e8ff85;
+  --lime-text: #0a0a1f;
+  --green: #6ee7b7;
+  --red: #fca5a5;
+  --amber: #fcd34d;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.app { max-width: 1280px; margin: 0 auto; padding: 40px 32px 60px; }
+
+.top-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 40px; margin-bottom: 40px; flex-wrap: wrap;
+}
+.top-header h1 {
+  font-size: clamp(48px, 6vw, 76px);
+  font-weight: 800; letter-spacing: -0.04em; line-height: 0.95;
+  max-width: 620px;
+}
+.top-right { display: flex; align-items: center; gap: 20px; padding-top: 14px; }
+.badge-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.badge-pill::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--lime); box-shadow: 0 0 8px var(--lime);
+}
+.top-right-text {
+  font-size: 14px; font-weight: 500; line-height: 1.5;
+  color: rgba(255,255,255,0.85); max-width: 220px;
+}
+
+.layout {
+  display: grid; grid-template-columns: 1.15fr 1fr;
+  gap: 32px; align-items: start;
+}
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 24px; }
+  .top-header { flex-direction: column; gap: 20px; }
+}
+
+.gallery {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  padding: 16px;
+}
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+@media (max-width: 640px) {
+  .nft-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .gallery { padding: 10px; border-radius: 18px; }
+}
+.nft-item {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.25s;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4a6fa5, #2d3e5f);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.nft-item:hover {
+  transform: translateY(-4px) scale(1.03);
+  z-index: 2;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(221,251,111,0.3);
+}
+.nft-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  image-rendering: crisp-edges;
+}
+.nft-item .placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(28px, 3.4vw, 44px);
+  background: linear-gradient(135deg, #4a6fa5, #2d3e5f);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+}
+.nft-item .num-badge {
+  position: absolute;
+  bottom: 6px; right: 6px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.nft-item:hover .num-badge { opacity: 1; }
+
+.mint-card {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+}
+@media (max-width: 640px) { .mint-card { padding: 22px; border-radius: 18px; } }
+
+.card-top-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.card-eyebrow {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.live-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px; border-radius: 999px;
+  background: rgba(221, 251, 111, 0.12);
+  border: 1px solid rgba(221, 251, 111, 0.4);
+  color: var(--lime); font-size: 11px; font-weight: 700;
+}
+.live-pill::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--lime); box-shadow: 0 0 6px var(--lime);
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.live-pill.off {
+  background: rgba(252, 165, 165, 0.12);
+  border-color: rgba(252, 165, 165, 0.4);
+  color: var(--red);
+}
+.live-pill.off::before { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.live-pill.loading {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  color: var(--muted);
+}
+.live-pill.loading::before {
+  background: var(--muted);
+  box-shadow: none;
+  animation: none;
+}
+
+.card-title {
+  font-size: 34px; font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 8px;
+}
+.card-sub {
+  font-size: 14px; color: var(--muted); font-weight: 500; margin-bottom: 26px;
+}
+
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; margin-bottom: 24px; padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.info-cell { padding-right: 20px; }
+.info-cell + .info-cell { padding-left: 20px; border-left: 1px solid var(--border); }
+.info-label {
+  font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 6px;
+}
+.info-value {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.1;
+  display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap;
+  min-height: 30px;
+}
+.info-value .unit { font-size: 13px; color: var(--muted); font-weight: 600; }
+.info-value .sub { font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 3px; }
+.info-value.skeleton {
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  width: 80px; height: 26px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+.progress-section { margin-bottom: 24px; }
+.progress-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; font-size: 13px;
+}
+.progress-head .label { color: var(--muted); font-weight: 500; }
+.progress-head .val { font-weight: 700; color: #fff; }
+.progress-bar {
+  height: 6px; border-radius: 999px;
+  background: rgba(255,255,255,0.08); overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--lime), #a3e635);
+  transition: width 0.6s ease;
+  box-shadow: 0 0 12px rgba(221,251,111,0.5);
+}
+.progress-note {
+  font-size: 11.5px; color: var(--muted-2);
+  margin-top: 8px; font-weight: 500;
+}
+
+.qty-section { margin-bottom: 24px; }
+.qty-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; font-size: 13px;
+}
+.qty-head .label { color: var(--muted); font-weight: 500; }
+.qty-head .hint { color: var(--muted-2); font-weight: 500; font-size: 12px; }
+
+.qty-main {
+  display: flex; align-items: center;
+  background: var(--card-2);
+  border: 1px solid var(--border-2);
+  border-radius: 14px; height: 60px;
+  padding: 4px; margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+.qty-main:focus-within { border-color: rgba(221,251,111,0.4); }
+.qty-btn {
+  width: 52px; height: 52px;
+  background: none; border: none; color: #fff;
+  font-size: 24px; font-weight: 400;
+  cursor: pointer; transition: all 0.15s; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none;
+}
+.qty-btn:hover:not(:disabled) { background: rgba(255,255,255,0.06); color: var(--lime); }
+.qty-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.qty-value {
+  flex: 1; text-align: center;
+  font-size: 20px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.qty-quick { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.qty-quick-btn {
+  padding: 10px 0;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: #fff; font-family: inherit;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.qty-quick-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--border-2);
+}
+.qty-quick-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.qty-quick-btn.active {
+  background: rgba(221, 251, 111, 0.15);
+  border-color: var(--lime); color: var(--lime);
+}
+
+.total-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.total-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+.total-value {
+  font-size: 24px; font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 5px;
+  min-height: 30px;
+}
+.total-value .unit { font-size: 14px; color: var(--muted); font-weight: 600; }
+.total-value.free { color: var(--lime); }
+.total-value.skeleton {
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  width: 100px; height: 26px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.mint-btn {
+  width: 100%; padding: 20px;
+  background: var(--lime); color: var(--lime-text);
+  border: none; border-radius: 14px;
+  font-family: inherit; font-size: 16px; font-weight: 800;
+  letter-spacing: -0.01em; cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.mint-btn:hover:not(:disabled) {
+  background: var(--lime-hover); transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(221, 251, 111, 0.35);
+}
+.mint-btn:active:not(:disabled) { transform: translateY(0); }
+.mint-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.mint-btn .wallet-icon { width: 20px; height: 20px; stroke-width: 2.2; }
+
+.mint-note {
+  text-align: center; font-size: 11.5px;
+  color: var(--muted-2); margin-top: 14px; font-weight: 500;
+}
+
+.connected-chip {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 10px; font-size: 12px; margin-bottom: 12px;
+}
+.connected-chip .addr {
+  font-family: ui-monospace, 'SF Mono', Monaco, monospace;
+  color: var(--muted); font-weight: 500;
+}
+.connected-chip .bal {
+  color: var(--lime); font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.connected-chip .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+}
+
+.gallery-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 6px 0;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.7); flex-wrap: wrap; gap: 10px;
+}
+
+.toasts {
+  position: fixed; top: 20px; right: 20px; z-index: 100;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 380px; width: calc(100% - 40px);
+  pointer-events: none;
+}
+.toast {
+  padding: 14px 16px; border-radius: 14px;
+  background: rgba(20, 20, 43, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-2);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  font-size: 13px; font-weight: 500; line-height: 1.5;
+  display: flex; gap: 12px; align-items: flex-start;
+  pointer-events: auto;
+  animation: slideIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+  word-break: break-word; color: #fff;
+}
+.toast.removing { animation: slideOut 0.25s ease forwards; }
+@keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
+.toast .t-icon {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+}
+.toast.info { border-color: rgba(99, 102, 241, 0.4); }
+.toast.info .t-icon { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; }
+.toast.success { border-color: rgba(221, 251, 111, 0.4); }
+.toast.success .t-icon { background: rgba(221, 251, 111, 0.2); color: var(--lime); }
+.toast.error { border-color: rgba(239, 68, 68, 0.4); }
+.toast.error .t-icon { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+.toast.warning { border-color: rgba(245, 158, 11, 0.4); }
+.toast.warning .t-icon { background: rgba(245, 158, 11, 0.2); color: var(--amber); }
+.toast .t-body { flex: 1; min-width: 0; }
+.toast .t-body b { color: #fff; font-weight: 700; }
+.toast .t-body a { color: var(--lime); text-decoration: underline; font-weight: 700; }
+.toast .t-close {
+  background: none; border: none; color: var(--muted);
+  cursor: pointer; font-size: 15px; padding: 2px; line-height: 1;
+}
+.toast .t-close:hover { color: #fff; }
+
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: currentColor; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.wallet-modal {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.wallet-modal.show { display: flex; }
+.wallet-modal-box {
+  background: var(--card); border: 1px solid var(--border-2);
+  border-radius: 20px; padding: 24px;
+  width: 100%; max-width: 400px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+.wallet-modal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 18px;
+}
+.wallet-modal-head h3 { font-size: 18px; font-weight: 800; }
+.wallet-modal-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 20px; cursor: pointer; padding: 4px;
+}
+.wallet-modal-close:hover { color: #fff; }
+.wallet-opt {
+  display: flex; align-items: center; gap: 14px;
+  width: 100%; padding: 14px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: #fff; font-family: inherit;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+  text-align: left; margin-bottom: 8px;
+}
+.wallet-opt:hover:not(:disabled) {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--border-2);
+  transform: translateY(-1px);
+}
+.wallet-opt:disabled { opacity: 0.4; cursor: not-allowed; }
+.wallet-opt .wo-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.06); flex-shrink: 0;
+}
+.wallet-opt .wo-icon svg { width: 24px; height: 24px; }
+.wallet-opt .wo-info { flex: 1; min-width: 0; }
+.wallet-opt .wo-name { font-size: 14px; font-weight: 700; }
+.wallet-opt .wo-status { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 2px; }
+.wallet-opt .wo-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 6px; letter-spacing: 0.05em;
+  background: rgba(221, 251, 111, 0.15); color: var(--lime);
+  border: 1px solid rgba(221, 251, 111, 0.3);
+}
+.no-wallet-help {
+  text-align: center; padding: 12px;
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+}
+.no-wallet-help a { color: var(--lime); text-decoration: none; font-weight: 700; }
+.no-wallet-help a:hover { text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .app { padding: 24px 16px 40px; }
+  .card-title { font-size: 26px; }
+  .info-value { font-size: 22px; }
+  .qty-quick { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="top-header">
+    <h1>Meet your next<br>little obsession.</h1>
+    <div class="top-right">
+      <div class="badge-pill">On Arc</div>
+      <div class="top-right-text">
+        A tribe of pixel apes.<br>Find a home for yours.
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <div>
+      <div class="gallery">
+        <div class="nft-grid" id="nftGrid"></div>
+      </div>
+      <div class="gallery-footer">
+        <div>The ARC Ape Goblin Collection</div>
+        <div>Built on Arc Network</div>
+      </div>
+    </div>
+
+    <div class="mint-card">
+
+      <div class="card-top-row">
+        <span class="card-eyebrow">Public Mint</span>
+        <span class="live-pill loading" id="salePill">Loading...</span>
+      </div>
+
+      <h2 class="card-title">Join the tribe.</h2>
+      <p class="card-sub">Your next goblin is one mint away.</p>
+
+      <div class="info-grid">
+        <div class="info-cell">
+          <div class="info-label">Price per NFT</div>
+          <div class="info-value skeleton" id="infoPrice"></div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Per wallet</div>
+          <div class="info-value skeleton" id="infoFree"></div>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-head">
+          <span class="label">Minted</span>
+          <span class="val" id="progText">— / —</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-note" id="progNote">Loading on-chain data...</div>
+      </div>
+
+      <div class="qty-section">
+        <div class="qty-head">
+          <span class="label">How many goblins?</span>
+          <span class="hint" id="qtyHint">max 10 / tx</span>
+        </div>
+        <div class="qty-main">
+          <button class="qty-btn" id="minusBtn" type="button">−</button>
+          <div class="qty-value" id="qtyValue">1</div>
+          <button class="qty-btn" id="plusBtn" type="button">+</button>
+        </div>
+        <div class="qty-quick" id="qtyQuick">
+          <button class="qty-quick-btn" data-qty="1">1</button>
+          <button class="qty-quick-btn" data-qty="3">3</button>
+          <button class="qty-quick-btn" data-qty="5">5</button>
+          <button class="qty-quick-btn" data-qty="10">10</button>
+          <button class="qty-quick-btn" data-qty="max">MAX</button>
+        </div>
+      </div>
+
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-value skeleton" id="totalValue"></span>
+      </div>
+
+      <div class="connected-chip" id="connectedChip" style="display:none;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="dot"></span>
+          <span class="addr" id="userAddr">—</span>
+        </div>
+        <span class="bal" id="userBal">0 NFT</span>
+      </div>
+
+      <button class="mint-btn" id="mainBtn">
+        <svg class="wallet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="6" width="20" height="14" rx="2"/>
+          <path d="M2 10h20"/>
+          <circle cx="17" cy="15" r="1" fill="currentColor"/>
+        </svg>
+        <span id="mainBtnText">Connect wallet to mint</span>
+      </button>
+
+      <div class="mint-note">Pay gas in USDC. Minted directly to your wallet.</div>
+
+    </div>
+  </div>
+</div>
+
+<div class="wallet-modal" id="walletModal">
+  <div class="wallet-modal-box">
+    <div class="wallet-modal-head">
+      <h3>Connect Wallet</h3>
+      <button class="wallet-modal-close" id="walletModalClose">✕</button>
+    </div>
+    <div id="walletList"></div>
+    <div class="no-wallet-help" id="noWalletHelp" style="display:none;">
+      No Web3 wallet detected.<br>
+      Please install <a href="https://metamask.io/download/" target="_blank">MetaMask</a>
+      or <a href="https://www.okx.com/web3" target="_blank">OKX Wallet</a>.
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+// ===================================================================
+// CONFIG — EDIT THESE
+// ===================================================================
+const CONTRACT_ADDRESS = "0x36607159275ed66b20e96bb5c229a0161e374f23";
+const COLLECTION_NAME = "ARC Ape Goblin";
+
+// IPFS CID của bộ sưu tập
+const IPFS_CID = "bafybeihslvelqylonhmxxedmpwkxfqbleqgwsmcqastpxzybumugs3acvi";
+
+// Danh sách gateway — tự động fallback nếu gateway trước lỗi
+const IPFS_GATEWAYS = [
+  "https://" + IPFS_CID + ".ipfs.inbrowser.link/",
+  "https://ipfs.io/ipfs/" + IPFS_CID + "/",
+  "https://cloudflare-ipfs.com/ipfs/" + IPFS_CID + "/",
+  "https://gateway.pinata.cloud/ipfs/" + IPFS_CID + "/",
+];
+
+// Số NFT hiển thị trong gallery
+const GALLERY_COUNT = 25;
+
+// ===================================================================
+// ARC MAINNET — HARDCODED
+// ===================================================================
+const ARC_CHAIN_ID = 5042;
+const ARC_CHAIN_ID_HEX = "0x13b2";
+const ARC_NETWORK_NAME = "Arc Mainnet";
+const ARC_RPC_URL = "https://rpc.mainnet.arc.io";
+const ARC_EXPLORER = "https://explorer.arc.io";
+const NATIVE_SYMBOL = "USDC";
+const NATIVE_DECIMALS = 18;
+
+const ARC_NETWORK_PARAMS = {
+  chainId: ARC_CHAIN_ID_HEX,
+  chainName: ARC_NETWORK_NAME,
+  nativeCurrency: { name: "USD Coin", symbol: "USDC", decimals: 18 },
+  rpcUrls: [ARC_RPC_URL],
+  blockExplorerUrls: [ARC_EXPLORER],
+};
+
+// ===================================================================
+// ABI
+// ===================================================================
+const ABI = [
+  "function mint(uint256 numberOfTokens) external payable",
+  "function totalSupply() view returns (uint256)",
+  "function maxSupply() view returns (uint256)",
+  "function balanceOf(address owner) view returns (uint256)",
+  "function PUBLIC_SALE_PRICE() view returns (uint256)",
+  "function MAX_FREE_PER_WALLET() view returns (uint256)",
+  "function MAX_MINTS_PER_TX() view returns (uint256)",
+  "function NUM_FREE_MINTS() view returns (uint256)",
+  "function freeNFTAlreadyMinted() view returns (uint256)",
+  "function isPublicSaleActive() view returns (bool)",
+];
+
+// ===================================================================
+// STATE
+// ===================================================================
+let readProvider, provider, signer, contract, userAddress;
+let selectedQty = 1;
+
+const state = {
+  totalSupply: 0n, maxSupply: 0n, price: 0n,
+  maxFreePerWallet: 0n, maxMintsPerTx: 10n, numFreeMints: 0n,
+  freeMinted: 0n, saleActive: false, userNftBalance: 0n, loaded: false,
+};
+
+// ===================================================================
+// DOM
+// ===================================================================
+const $ = (id) => document.getElementById(id);
+const nftGrid = $("nftGrid");
+const salePill = $("salePill");
+const infoPrice = $("infoPrice");
+const infoFree = $("infoFree");
+const progText = $("progText");
+const progFill = $("progFill");
+const progNote = $("progNote");
+const qtyHint = $("qtyHint");
+const qtyValue = $("qtyValue");
+const qtyQuick = $("qtyQuick");
+const totalValue = $("totalValue");
+const mainBtn = $("mainBtn");
+const mainBtnText = $("mainBtnText");
+const connectedChip = $("connectedChip");
+const userAddr = $("userAddr");
+const userBal = $("userBal");
+const walletModal = $("walletModal");
+const walletList = $("walletList");
+const noWalletHelp = $("noWalletHelp");
+const walletModalClose = $("walletModalClose");
+const toastsEl = $("toasts");
+const minusBtn = $("minusBtn");
+const plusBtn = $("plusBtn");
+
+// ===================================================================
+// ICONS
+// ===================================================================
+const ICONS = {
+  metamask: `<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M28.5 4L18 11.5L20 6.5L28.5 4Z" fill="#E2761B"/>
+    <path d="M3.5 4L13.9 11.6L11.9 6.5L3.5 4Z" fill="#E4761B"/>
+    <path d="M24.5 22L21.5 26.5L28 28.5L30 22.2L24.5 22Z" fill="#E4761B"/>
+    <path d="M2 22.2L4 28.5L10.5 26.5L7.5 22H2Z" fill="#E4761B"/>
+    <path d="M10.1 14.2L8.4 16.8L14.8 17.1L14.6 10.2L10.1 14.2Z" fill="#E4761B"/>
+    <path d="M21.9 14.2L17.3 10.1L17.2 17.1L23.6 16.8L21.9 14.2Z" fill="#E4761B"/>
+    <path d="M10.5 26.5L14.4 24.4L11 22.3L10.5 26.5Z" fill="#E4761B"/>
+    <path d="M17.6 24.4L21.5 26.5L21 22.3L17.6 24.4Z" fill="#E4761B"/>
+    <path d="M21.5 26.5L17.6 24.4L17.9 26.4V28.4L21.5 26.5Z" fill="#D7C1B3"/>
+    <path d="M10.5 26.5L14.1 28.4V26.4L14.4 24.4L10.5 26.5Z" fill="#D7C1B3"/>
+    <path d="M14.1 21.1L10.8 20.1L13.2 19L14.1 21.1Z" fill="#233447"/>
+    <path d="M17.9 21.1L18.8 19L21.2 20.1L17.9 21.1Z" fill="#233447"/>
+    <path d="M10.5 26.5L11 22.2L7.5 22L10.5 26.5Z" fill="#CD6116"/>
+    <path d="M21 22.2L21.5 26.5L24.5 22L21 22.2Z" fill="#CD6116"/>
+    <path d="M23.6 16.8L17.2 17.1L17.9 21.1L18.8 19L21.2 20.1L23.6 16.8Z" fill="#CD6116"/>
+    <path d="M10.8 20.1L13.2 19L14.1 21.1L14.8 17.1L8.4 16.8L10.8 20.1Z" fill="#CD6116"/>
+    <path d="M8.4 16.8L11 22.3L10.8 20.1L8.4 16.8Z" fill="#E4751F"/>
+    <path d="M21.2 20.1L21 22.3L23.6 16.8L21.2 20.1Z" fill="#E4751F"/>
+    <path d="M14.8 17.1L14.1 21.1L15 25.3L15.2 19.8L14.8 17.1Z" fill="#E4751F"/>
+    <path d="M17.2 17.1L16.8 19.8L16.9 25.3L17.9 21.1L17.2 17.1Z" fill="#E4751F"/>
+    <path d="M17.9 21.1L16.9 25.3L17.6 24.4L21 22.3L21.2 20.1L17.9 21.1Z" fill="#F6851B"/>
+    <path d="M10.8 20.1L11 22.3L14.4 24.4L15 25.3L14.1 21.1L10.8 20.1Z" fill="#F6851B"/>
+    <path d="M17.9 28.4V26.4L17.6 26.2H14.4L14.1 26.4V28.4L10.5 26.5L11.7 27.5L14.4 29.5H17.6L20.3 27.5L21.5 26.5L17.9 28.4Z" fill="#C0AD9E"/>
+    <path d="M17.6 24.4L16.9 25.3H15.1L14.4 24.4L14.1 26.4L14.4 26.2H17.6L17.9 26.4L17.6 24.4Z" fill="#161616"/>
+    <path d="M29 12L30 6.7L28.5 4L17.6 11.3L21.9 14.2L27.8 15.9L29.1 14.4L28.5 14L29.4 13.2L28.6 12.6L29.5 11.9L29 12Z" fill="#763D16"/>
+    <path d="M2 6.7L3 12L2.4 11.9L3.3 12.6L2.5 13.2L3.4 14L2.8 14.4L4.1 15.9L10 14.2L14.3 11.3L3.5 4L2 6.7Z" fill="#763D16"/>
+    <path d="M27.8 15.9L21.9 14.2L23.6 16.8L21 22.3L24.5 22.2H30L27.8 15.9Z" fill="#F6851B"/>
+    <path d="M10.1 14.2L4.1 15.9L2 22.2H7.5L11 22.3L8.4 16.8L10.1 14.2Z" fill="#F6851B"/>
+    <path d="M17.2 17.1L17.6 11.3L18.8 7.8H13.2L14.3 11.3L14.8 17.1L15 19.8V25.3H17L17.1 19.8L17.2 17.1Z" fill="#F6851B"/>
+  </svg>`,
+  okx: `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="12.5" y="4" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="21" y="4" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="4" y="12.5" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="21" y="12.5" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="4" y="21" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="12.5" y="21" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="21" y="21" width="7" height="7" rx="1.5" fill="#fff"/>
+    <rect x="12.5" y="12.5" width="7" height="7" rx="1.5" fill="#fff"/>
+  </svg>`,
+};
+
+// ===================================================================
+// GALLERY — load images from IPFS with multi-gateway fallback
+// ===================================================================
+const APE_EMOJIS = ["🦍", "🐵", "🙈", "🙉", "🙊", "🐒", "🦧", "👽", "🤖", "👾",
+                    "🎮", "🎨", "🔥", "💎", "⚡", "🌟", "🚀", "🎯", "🏆", "💀",
+                    "👑", "🎭", "🃏", "🎪", "🎬"];
+const GRADIENT_STYLES = [
+  "linear-gradient(135deg, #4a6fa5, #2d3e5f)",
+  "linear-gradient(135deg, #ff6b9d, #ffb84d)",
+  "linear-gradient(135deg, #4dd8ff, #7b5eff)",
+  "linear-gradient(135deg, #ffe066, #ff9a3c)",
+  "linear-gradient(135deg, #a78bfa, #6b4df5)",
+  "linear-gradient(135deg, #22d3ee, #4dd8ff)",
+  "linear-gradient(135deg, #f472b6, #c084fc)",
+  "linear-gradient(135deg, #34d399, #22d3ee)",
+  "linear-gradient(135deg, #fb7185, #f472b6)",
+  "linear-gradient(135deg, #fbbf24, #fb923c)",
+];
+
+// Thử load ảnh từ gateway. Nếu gateway[0] lỗi, thử gateway[1]...
+function loadImageWithFallback(tokenId, onSuccess, onAllFail) {
+  let gatewayIndex = 0;
+  const tryNext = () => {
+    if (gatewayIndex >= IPFS_GATEWAYS.length) {
+      onAllFail && onAllFail();
+      return;
+    }
+    const url = `${IPFS_GATEWAYS[gatewayIndex]}${tokenId}.png`;
+    const img = new Image();
+    img.onload = () => onSuccess && onSuccess(img.src);
+    img.onerror = () => {
+      gatewayIndex++;
+      tryNext();
+    };
+    img.src = url;
+  };
+  tryNext();
+}
+
+function renderGallery() {
+  for (let i = 0; i < GALLERY_COUNT; i++) {
+    const tokenId = i + 1;
+    const item = document.createElement("div");
+    item.className = "nft-item";
+
+    // Placeholder tạm
+    const placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+    placeholder.style.background = GRADIENT_STYLES[i % GRADIENT_STYLES.length];
+    placeholder.textContent = APE_EMOJIS[i % APE_EMOJIS.length];
+    item.appendChild(placeholder);
+
+    // Load ảnh thật với fallback
+    loadImageWithFallback(
+      tokenId,
+      (src) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = `Ape #${tokenId}`;
+        img.loading = "lazy";
+        item.innerHTML = "";
+        item.appendChild(img);
+      },
+      () => {
+        // Giữ placeholder nếu tất cả gateway lỗi
+        console.warn(`Could not load image for token #${tokenId}`);
+      }
+    );
+
+    // Badge số
+    const badge = document.createElement("div");
+    badge.className = "num-badge";
+    badge.textContent = `#${tokenId}`;
+    item.appendChild(badge);
+
+    nftGrid.appendChild(item);
+  }
+}
+renderGallery();
+
+// ===================================================================
+// UTILS
+// ===================================================================
+const shortAddr = (a) => a.slice(0, 6) + "..." + a.slice(-4);
+function formatAmount(wei) {
+  const v = parseFloat(ethers.utils.formatUnits(wei, NATIVE_DECIMALS));
+  if (v === 0) return "0";
+  if (v < 0.001) return v.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
+  if (v < 1) return v.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+  return v.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+}
+function formatNumber(n) {
+  return Number(n).toLocaleString("en-US");
+}
+function getExplorerUrl(txHash) {
+  return `${ARC_EXPLORER}/tx/${txHash}`;
+}
+
+// ===================================================================
+// TOAST
+// ===================================================================
+function toast(msg, type = "info", duration = 5000) {
+  const icons = { info: "ℹ", success: "✓", error: "✕", warning: "⚠" };
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = `
+    <div class="t-icon">${icons[type] || "ℹ"}</div>
+    <div class="t-body">${msg}</div>
+    <button class="t-close">✕</button>
+  `;
+  el.querySelector(".t-close").addEventListener("click", () => removeToast(el));
+  toastsEl.appendChild(el);
+  if (duration > 0) setTimeout(() => removeToast(el), duration);
+}
+function removeToast(el) {
+  if (!el.parentNode) return;
+  el.classList.add("removing");
+  setTimeout(() => el.remove(), 250);
+}
+function clearToasts() { toastsEl.querySelectorAll(".toast").forEach(t => removeToast(t)); }
+
+// ===================================================================
+// WALLET DETECTION
+// ===================================================================
+function detectWallets() {
+  const list = [];
+  if (window.ethereum && window.ethereum.isMetaMask) {
+    list.push({ id: "metamask", name: "MetaMask", provider: window.ethereum, icon: ICONS.metamask, status: "Detected" });
+  }
+  const okx = window.okxwallet || (window.ethereum && window.ethereum.isOKXWallet ? window.ethereum : null);
+  if (okx) {
+    list.push({ id: "okx", name: "OKX Wallet", provider: okx, icon: ICONS.okx, status: "Detected" });
+  }
+  if (list.length === 0 && window.ethereum) {
+    list.push({ id: "injected", name: "Browser Wallet", provider: window.ethereum, icon: "👛", status: "Detected" });
+  }
+  return list;
+}
+
+// ===================================================================
+// MODAL
+// ===================================================================
+function openWalletModal() {
+  const wallets = detectWallets();
+  walletList.innerHTML = "";
+  noWalletHelp.style.display = "none";
+  if (wallets.length === 0) {
+    noWalletHelp.style.display = "block";
+    walletModal.classList.add("show");
+    return;
+  }
+  wallets.forEach(w => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "wallet-opt";
+    btn.innerHTML = `
+      <div class="wo-icon">${w.icon}</div>
+      <div class="wo-info">
+        <div class="wo-name">${w.name}</div>
+        <div class="wo-status">${w.status}</div>
+      </div>
+      <div class="wo-badge">Connect</div>
+    `;
+    btn.addEventListener("click", () => {
+      closeWalletModal();
+      connectWallet(w);
+    });
+    walletList.appendChild(btn);
+  });
+  walletModal.classList.add("show");
+}
+function closeWalletModal() { walletModal.classList.remove("show"); }
+walletModalClose.addEventListener("click", closeWalletModal);
+walletModal.addEventListener("click", (e) => { if (e.target === walletModal) closeWalletModal(); });
+
+// ===================================================================
+// QUANTITY
+// ===================================================================
+function getMaxQty() {
+  if (!state.loaded) return 10;
+  const contractMax = Number(state.maxMintsPerTx);
+  const remaining = Number(state.maxSupply - state.totalSupply);
+  return Math.min(contractMax, remaining > 0 ? remaining : 0);
+}
+function isFreeEligible() {
+  return state.loaded
+    && state.userNftBalance === 0n
+    && state.freeMinted + 1n <= state.numFreeMints
+    && state.maxFreePerWallet >= 1n;
+}
+function setQty(v) {
+  const max = getMaxQty();
+  if (v < 1) v = 1;
+  if (max > 0 && v > max) v = max;
+  if (max === 0) v = 0;
+  selectedQty = v;
+  updateQtyUI();
+  updatePriceUI();
+}
+function updateQtyUI() {
+  const max = getMaxQty();
+  qtyValue.textContent = selectedQty;
+  qtyHint.textContent = `max ${max} / tx`;
+  minusBtn.disabled = selectedQty <= 1;
+  plusBtn.disabled = selectedQty >= max || max === 0;
+
+  qtyQuick.querySelectorAll(".qty-quick-btn").forEach(btn => {
+    const q = btn.dataset.qty;
+    btn.classList.remove("active");
+    if (q === "max") {
+      btn.disabled = max === 0 || selectedQty === max;
+      if (selectedQty === max) btn.classList.add("active");
+    } else {
+      const n = parseInt(q);
+      btn.disabled = n > max;
+      if (n === selectedQty) btn.classList.add("active");
+    }
+  });
+}
+
+// ===================================================================
+// PRICE
+// ===================================================================
+function computeCost(quantity) {
+  const qty = BigInt(quantity);
+  const bal = state.userNftBalance;
+  let isFree = false;
+  if (state.freeMinted + qty <= state.numFreeMints) {
+    if (bal + qty <= state.maxFreePerWallet) isFree = true;
+  }
+  const paid = isFree ? 0n : qty;
+  return { isFree, totalWei: state.price * paid };
+}
+function updatePriceUI() {
+  if (state.loaded) {
+    infoPrice.classList.remove("skeleton");
+    infoPrice.innerHTML = `${formatAmount(state.price)} <span class="unit">${NATIVE_SYMBOL}</span>`;
+    infoFree.classList.remove("skeleton");
+    infoFree.innerHTML = `${state.maxFreePerWallet}<span class="sub">free / wallet</span>`;
+  } else {
+    infoPrice.classList.add("skeleton");
+    infoPrice.innerHTML = "";
+    infoFree.classList.add("skeleton");
+    infoFree.innerHTML = "";
+  }
+
+  if (!state.loaded) {
+    totalValue.classList.add("skeleton");
+    totalValue.innerHTML = "";
+    return;
+  }
+  totalValue.classList.remove("skeleton");
+
+  if (!userAddress) {
+    const cost = state.price * BigInt(selectedQty || 0);
+    totalValue.innerHTML = `${formatAmount(cost)} <span class="unit">${NATIVE_SYMBOL}</span>`;
+    totalValue.classList.remove("free");
+    return;
+  }
+
+  const { isFree, totalWei } = computeCost(selectedQty);
+  if (isFree) {
+    totalValue.innerHTML = `FREE`;
+    totalValue.classList.add("free");
+  } else {
+    totalValue.innerHTML = `${formatAmount(totalWei)} <span class="unit">${NATIVE_SYMBOL}</span>`;
+    totalValue.classList.remove("free");
+  }
+}
+
+// ===================================================================
+// CONTRACT READ
+// ===================================================================
+async function readState(c) {
+  const [totalSupply, maxSupply, price, maxFreePerWallet, maxMintsPerTx, numFreeMints, freeMinted, saleActive] =
+    await Promise.all([
+      c.totalSupply(), c.maxSupply(), c.PUBLIC_SALE_PRICE(),
+      c.MAX_FREE_PER_WALLET(), c.MAX_MINTS_PER_TX(), c.NUM_FREE_MINTS(),
+      c.freeNFTAlreadyMinted(), c.isPublicSaleActive(),
+    ]);
+
+  state.totalSupply = BigInt(totalSupply.toString());
+  state.maxSupply = BigInt(maxSupply.toString());
+  state.price = BigInt(price.toString());
+  state.maxFreePerWallet = BigInt(maxFreePerWallet.toString());
+  state.maxMintsPerTx = BigInt(maxMintsPerTx.toString());
+  state.numFreeMints = BigInt(numFreeMints.toString());
+  state.freeMinted = BigInt(freeMinted.toString());
+  state.saleActive = saleActive;
+  state.loaded = true;
+
+  const pct = state.maxSupply > 0n
+    ? Number((state.totalSupply * 10000n) / state.maxSupply) / 100
+    : 0;
+  progFill.style.width = Math.min(100, pct) + "%";
+  progText.textContent = `${formatNumber(state.totalSupply)} / ${formatNumber(state.maxSupply)}`;
+  const remaining = state.maxSupply > state.totalSupply ? state.maxSupply - state.totalSupply : 0n;
+  progNote.textContent = `${formatNumber(remaining)} remaining · Live on Arc`;
+
+  if (state.saleActive) {
+    salePill.textContent = "Mint is live";
+    salePill.classList.remove("off", "loading");
+  } else {
+    salePill.textContent = "Mint is closed";
+    salePill.classList.add("off");
+    salePill.classList.remove("loading");
+  }
+
+  setQty(selectedQty);
+  updatePriceUI();
+}
+
+async function loadFromRPC() {
+  try {
+    if (!readProvider) readProvider = new ethers.providers.JsonRpcProvider(ARC_RPC_URL);
+    const c = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
+    await readState(c);
+  } catch (err) {
+    console.error("RPC error:", err);
+    progNote.textContent = "Could not read contract. Check address / RPC.";
+    salePill.textContent = "Unknown";
+    salePill.classList.add("off");
+    salePill.classList.remove("loading");
+    infoPrice.classList.add("skeleton");
+    infoPrice.innerHTML = "";
+    infoFree.classList.add("skeleton");
+    infoFree.innerHTML = "";
+    totalValue.classList.add("skeleton");
+    totalValue.innerHTML = "";
+    toast("Failed to read contract via RPC. Check address / RPC.", "warning", 6000);
+  }
+}
+async function loadFromWallet() {
+  if (!provider) return;
+  const c = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+  try { await readState(c); } catch (e) { console.error(e); }
+}
+async function refreshBalance() {
+  if (!userAddress || !provider) return;
+  const c = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+  const bal = await c.balanceOf(userAddress);
+  state.userNftBalance = BigInt(bal.toString());
+  userBal.textContent = `${state.userNftBalance} NFT`;
+}
+
+// ===================================================================
+// CHAIN SWITCH — always Arc Mainnet
+// ===================================================================
+async function ensureArc(raw) {
+  try {
+    const hex = await raw.request({ method: "eth_chainId" });
+    if (parseInt(hex, 16) === ARC_CHAIN_ID) return true;
+    try {
+      await raw.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ARC_CHAIN_ID_HEX }],
+      });
+      return true;
+    } catch (e) {
+      if (e.code === 4902) {
+        await raw.request({
+          method: "wallet_addEthereumChain",
+          params: [ARC_NETWORK_PARAMS],
+        });
+        return true;
+      }
+      throw e;
+    }
+  } catch (e) {
+    console.error("Chain switch error:", e);
+    toast("Please switch to Arc Mainnet manually.", "warning", 6000);
+    return false;
+  }
+}
+
+// ===================================================================
+// CONNECT
+// ===================================================================
+async function connectWallet(wallet) {
+  if (!wallet || !wallet.provider) return;
+  try {
+    const raw = wallet.provider;
+    const accounts = await raw.request({ method: "eth_requestAccounts" });
+    if (!accounts || accounts.length === 0) throw new Error("No accounts");
+
+    await ensureArc(raw);
+
+    provider = new ethers.providers.Web3Provider(raw);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
+    connectedChip.style.display = "flex";
+    userAddr.textContent = shortAddr(userAddress);
+    mainBtnText.textContent = "Mint";
+
+    await loadFromWallet();
+    await refreshBalance();
+    setQty(selectedQty);
+    updatePriceUI();
+
+    toast(`Connected ${shortAddr(userAddress)}`, "success", 3000);
+
+    raw.on && raw.on("accountsChanged", () => location.reload());
+    raw.on && raw.on("chainChanged", () => location.reload());
+
+  } catch (err) {
+    console.error(err);
+    if (err.code === 4001 || (err.message && err.message.includes("user rejected"))) {
+      toast("Connection rejected.", "warning", 4000);
+    } else {
+      toast("Connection failed: " + (err.message || err), "error", 6000);
+    }
+  }
+}
+
+// ===================================================================
+// MINT
+// ===================================================================
+async function mint() {
+  if (!contract || !userAddress) return;
+  const qty = selectedQty;
+  if (qty < 1) return toast("Quantity must be ≥ 1", "error");
+  if (BigInt(qty) > state.maxMintsPerTx) return toast(`Max ${state.maxMintsPerTx} per tx`, "error");
+  if (state.totalSupply + BigInt(qty) > state.maxSupply) return toast("Not enough supply left", "error");
+
+  const { totalWei } = computeCost(qty);
+
+  try {
+    mainBtn.disabled = true;
+    mainBtnText.innerHTML = '<span class="spinner"></span> Confirming...';
+
+    const tx = await contract.mint(qty, { value: totalWei });
+    toast(
+      `Transaction sent.<br><a href="${getExplorerUrl(tx.hash)}" target="_blank">View on Arc Explorer →</a>`,
+      "info", 0
+    );
+
+    const receipt = await tx.wait();
+    clearToasts();
+    toast(
+      `Minted <b>${qty} ${COLLECTION_NAME}</b>!<br><a href="${getExplorerUrl(receipt.transactionHash)}" target="_blank">View transaction →</a>`,
+      "success", 8000
+    );
+
+    await loadFromWallet();
+    await refreshBalance();
+    updatePriceUI();
+
+  } catch (err) {
+    console.error(err);
+    let msg = "Mint failed.";
+    if (err.code === 4001 || (err.message && err.message.includes("user rejected"))) msg = "Transaction rejected.";
+    else if (err.error?.message) msg = err.error.message;
+    else if (err.reason) msg = err.reason;
+    else if (err.message) msg = err.message;
+    toast(msg, "error", 7000);
+  } finally {
+    mainBtn.disabled = false;
+    mainBtnText.textContent = "Mint";
+  }
+}
+
+// ===================================================================
+// EVENTS
+// ===================================================================
+mainBtn.addEventListener("click", () => {
+  if (!userAddress) { openWalletModal(); return; }
+  mint();
+});
+minusBtn.addEventListener("click", () => { if (selectedQty > 1) setQty(selectedQty - 1); });
+plusBtn.addEventListener("click", () => { if (selectedQty < getMaxQty()) setQty(selectedQty + 1); });
+
+qtyQuick.querySelectorAll(".qty-quick-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.disabled) return;
+    const q = btn.dataset.qty;
+    if (q === "max") setQty(getMaxQty());
+    else setQty(parseInt(q));
+  });
+});
+
+// ===================================================================
+// INIT
+// ===================================================================
+setQty(1);
+updatePriceUI();
+loadFromRPC();
+
+window.addEventListener("load", async () => {
+  const wallets = detectWallets();
+  if (wallets.length === 0) return;
+  for (const w of wallets) {
+    try {
+      const accounts = await w.provider.request({ method: "eth_accounts" });
+      if (accounts && accounts.length > 0) { connectWallet(w); return; }
+    } catch (e) {}
+  }
+});
+</script>
+</body>
+</html>
