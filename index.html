@@ -34,37 +34,37 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
-.app { max-width: 1280px; margin: 0 auto; padding: 40px 32px 60px; }
+.app { max-width: 1280px; margin: 0 auto; padding: 20px 32px 60px; }
 
-/* ============ COLLECTION HEADER ============ */
+/* ============ COLLECTION HEADER (compact) ============ */
 .collection-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 32px;
-  padding: 18px 24px;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 12px 20px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 18px;
+  border-radius: 16px;
   backdrop-filter: blur(10px);
   flex-wrap: wrap;
 }
 .collection-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 .collection-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #a78bfa, #6b4df5);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
   position: relative;
   overflow: hidden;
 }
@@ -83,24 +83,24 @@ body {
 }
 .collection-info { min-width: 0; }
 .collection-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 .verified-badge {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 .collection-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-size: 12px;
   color: rgba(255,255,255,0.7);
   font-weight: 500;
@@ -112,20 +112,15 @@ body {
   border-radius: 50%;
   background: rgba(255,255,255,0.4);
 }
-.collection-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 .network-tag {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
+  gap: 6px;
+  padding: 7px 12px;
   border-radius: 999px;
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.2);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -140,48 +135,56 @@ body {
 }
 
 @media (max-width: 640px) {
-  .collection-header { padding: 14px 16px; border-radius: 14px; }
-  .collection-avatar { width: 44px; height: 44px; border-radius: 11px; }
-  .collection-title { font-size: 17px; }
+  .collection-header { padding: 12px 14px; border-radius: 12px; }
+  .collection-avatar { width: 40px; height: 40px; border-radius: 10px; }
+  .collection-title { font-size: 15px; }
   .collection-meta { font-size: 11px; gap: 8px; }
 }
 
-/* ===================== HERO ===================== */
-.top-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 40px; margin-bottom: 32px; flex-wrap: wrap;
-}
-.top-header h1 {
-  font-size: clamp(42px, 5.4vw, 68px);
-  font-weight: 800; letter-spacing: -0.04em; line-height: 0.95;
-  max-width: 620px;
-}
-.top-right { display: flex; align-items: center; gap: 20px; padding-top: 14px; }
-.top-right-text {
-  font-size: 14px; font-weight: 500; line-height: 1.5;
-  color: rgba(255,255,255,0.85); max-width: 220px;
-}
-
+/* ===================== LAYOUT ===================== */
 .layout {
-  display: grid; grid-template-columns: 1.15fr 1fr;
-  gap: 32px; align-items: start;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 24px;
+  align-items: start;
 }
 @media (max-width: 1000px) {
-  .layout { grid-template-columns: 1fr; gap: 24px; }
-  .top-header { flex-direction: column; gap: 20px; }
+  .layout { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* ===================== LEFT COLUMN ===================== */
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero-block h1 {
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  margin-bottom: 12px;
+}
+.hero-block p {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.75);
+  max-width: 420px;
 }
 
 /* ===================== GALLERY ===================== */
 .gallery {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 24px;
-  padding: 16px;
+  border-radius: 22px;
+  padding: 14px;
 }
 .nft-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  gap: 8px;
 }
 @media (max-width: 640px) {
   .nft-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
@@ -189,14 +192,14 @@ body {
 }
 .nft-item {
   aspect-ratio: 1 / 1;
-  border-radius: 12px;
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
   transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.25s;
   cursor: pointer;
   background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   animation: skeleton-pulse 1.6s ease-in-out infinite;
 }
 @keyframes skeleton-pulse {
@@ -209,9 +212,9 @@ body {
   border: none;
 }
 .nft-item:hover {
-  transform: translateY(-4px) scale(1.03);
+  transform: translateY(-3px) scale(1.03);
   z-index: 2;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 20px rgba(221,251,111,0.3);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.5), 0 0 18px rgba(221,251,111,0.3);
 }
 .nft-item img {
   width: 100%; height: 100%;
@@ -221,46 +224,57 @@ body {
   opacity: 0;
   transition: opacity 0.35s ease;
 }
-.nft-item.loaded img {
-  opacity: 1;
-}
+.nft-item.loaded img { opacity: 1; }
 .nft-item .num-badge {
   position: absolute;
-  bottom: 6px; right: 6px;
-  background: rgba(0,0,0,0.7);
+  bottom: 5px; right: 5px;
+  background: rgba(0,0,0,0.75);
   color: #fff;
-  font-size: 10px; font-weight: 700;
-  padding: 2px 6px; border-radius: 6px;
+  font-size: 9px; font-weight: 700;
+  padding: 2px 5px; border-radius: 5px;
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
 }
 .nft-item:hover .num-badge { opacity: 1; }
 
+.gallery-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 4px 0;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.6); flex-wrap: wrap; gap: 8px;
+}
+
 /* ===================== MINT CARD ===================== */
 .mint-card {
   background: var(--card);
-  border-radius: 24px;
-  padding: 32px;
+  border-radius: 22px;
+  padding: 26px;
   position: relative;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+  position: sticky;
+  top: 20px;
 }
-@media (max-width: 640px) { .mint-card { padding: 22px; border-radius: 18px; } }
+@media (max-width: 1000px) {
+  .mint-card { position: static; }
+}
+@media (max-width: 640px) { .mint-card { padding: 20px; border-radius: 18px; } }
 
 .card-top-row {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 .card-eyebrow {
-  font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--muted);
 }
 .live-pill {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 11px; border-radius: 999px;
+  padding: 5px 10px; border-radius: 999px;
   background: rgba(221, 251, 111, 0.12);
   border: 1px solid rgba(221, 251, 111, 0.4);
-  color: var(--lime); font-size: 11px; font-weight: 700;
+  color: var(--lime); font-size: 10px; font-weight: 700;
 }
 .live-pill::before {
   content: ''; width: 5px; height: 5px; border-radius: 50%;
@@ -286,40 +300,39 @@ body {
 }
 
 .card-title {
-  font-size: 34px; font-weight: 800;
-  letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 8px;
+  font-size: 30px; font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 6px;
 }
 .card-sub {
-  font-size: 14px; color: var(--muted); font-weight: 500; margin-bottom: 26px;
+  font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 22px;
 }
 
 .info-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0; margin-bottom: 24px; padding-bottom: 24px;
+  display: grid; grid-template-columns: 1fr;
+  gap: 0; margin-bottom: 20px; padding-bottom: 20px;
   border-bottom: 1px solid var(--border);
 }
-.info-cell { padding-right: 20px; }
-.info-cell + .info-cell { padding-left: 20px; border-left: 1px solid var(--border); }
+.info-cell { padding-right: 0; }
 .info-label {
   font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 6px;
 }
 .info-value {
-  font-size: 26px; font-weight: 800;
+  font-size: 24px; font-weight: 800;
   letter-spacing: -0.02em; line-height: 1.1;
   display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap;
-  min-height: 30px;
+  min-height: 28px;
 }
 .info-value .unit { font-size: 13px; color: var(--muted); font-weight: 600; }
 .info-value .sub { font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 3px; }
 .info-value.skeleton {
   background: rgba(255,255,255,0.08);
   border-radius: 6px;
-  width: 80px; height: 26px;
+  width: 80px; height: 24px;
   animation: pulse 1.4s ease-in-out infinite;
 }
 @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
 
-.progress-section { margin-bottom: 24px; }
+.progress-section { margin-bottom: 20px; }
 .progress-head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 10px; font-size: 13px;
@@ -337,11 +350,11 @@ body {
   box-shadow: 0 0 12px rgba(221,251,111,0.5);
 }
 .progress-note {
-  font-size: 11.5px; color: var(--muted-2);
+  font-size: 11px; color: var(--muted-2);
   margin-top: 8px; font-weight: 500;
 }
 
-.qty-section { margin-bottom: 24px; }
+.qty-section { margin-bottom: 20px; }
 .qty-head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 10px; font-size: 13px;
@@ -353,15 +366,15 @@ body {
   display: flex; align-items: center;
   background: var(--card-2);
   border: 1px solid var(--border-2);
-  border-radius: 14px; height: 60px;
+  border-radius: 14px; height: 56px;
   padding: 4px; margin-bottom: 10px;
   transition: border-color 0.15s;
 }
 .qty-main:focus-within { border-color: rgba(221,251,111,0.4); }
 .qty-btn {
-  width: 52px; height: 52px;
+  width: 48px; height: 48px;
   background: none; border: none; color: #fff;
-  font-size: 24px; font-weight: 400;
+  font-size: 22px; font-weight: 400;
   cursor: pointer; transition: all 0.15s; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   user-select: none;
@@ -370,13 +383,13 @@ body {
 .qty-btn:disabled { opacity: 0.25; cursor: not-allowed; }
 .qty-value {
   flex: 1; text-align: center;
-  font-size: 20px; font-weight: 700;
+  font-size: 19px; font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.qty-quick { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.qty-quick { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
 .qty-quick-btn {
-  padding: 10px 0;
+  padding: 9px 0;
   background: var(--card-2);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -396,32 +409,32 @@ body {
 
 .total-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 0;
+  padding: 16px 0;
   border-top: 1px solid var(--border);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .total-label { font-size: 13px; color: var(--muted); font-weight: 500; }
 .total-value {
-  font-size: 24px; font-weight: 800;
+  font-size: 22px; font-weight: 800;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   display: flex; align-items: baseline; gap: 5px;
-  min-height: 30px;
+  min-height: 28px;
 }
-.total-value .unit { font-size: 14px; color: var(--muted); font-weight: 600; }
+.total-value .unit { font-size: 13px; color: var(--muted); font-weight: 600; }
 .total-value.free { color: var(--lime); }
 .total-value.skeleton {
   background: rgba(255,255,255,0.08);
   border-radius: 6px;
-  width: 100px; height: 26px;
+  width: 100px; height: 24px;
   animation: pulse 1.4s ease-in-out infinite;
 }
 
 .mint-btn {
-  width: 100%; padding: 20px;
+  width: 100%; padding: 18px;
   background: var(--lime); color: var(--lime-text);
   border: none; border-radius: 14px;
-  font-family: inherit; font-size: 16px; font-weight: 800;
+  font-family: inherit; font-size: 15px; font-weight: 800;
   letter-spacing: -0.01em; cursor: pointer;
   transition: all 0.18s ease;
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -435,8 +448,8 @@ body {
 .mint-btn .wallet-icon { width: 20px; height: 20px; stroke-width: 2.2; }
 
 .mint-note {
-  text-align: center; font-size: 11.5px;
-  color: var(--muted-2); margin-top: 14px; font-weight: 500;
+  text-align: center; font-size: 11px;
+  color: var(--muted-2); margin-top: 12px; font-weight: 500;
 }
 
 .connected-chip {
@@ -459,14 +472,7 @@ body {
   background: var(--green); box-shadow: 0 0 8px var(--green);
 }
 
-.gallery-footer {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 18px 6px 0;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255,255,255,0.7); flex-wrap: wrap; gap: 10px;
-}
-
+/* ===================== TOASTS ===================== */
 .toasts {
   position: fixed; top: 20px; right: 20px; z-index: 100;
   display: flex; flex-direction: column; gap: 10px;
@@ -580,10 +586,11 @@ body {
 .no-wallet-help a:hover { text-decoration: underline; }
 
 @media (max-width: 640px) {
-  .app { padding: 24px 16px 40px; }
-  .card-title { font-size: 26px; }
-  .info-value { font-size: 22px; }
+  .app { padding: 16px 16px 40px; }
+  .card-title { font-size: 24px; }
+  .info-value { font-size: 20px; }
   .qty-quick { grid-template-columns: repeat(3, 1fr); }
+  .hero-block h1 { font-size: 28px; }
 }
 </style>
 </head>
@@ -591,7 +598,7 @@ body {
 
 <div class="app">
 
-  <!-- ============ COLLECTION HEADER ============ -->
+  <!-- ============ COMPACT COLLECTION HEADER ============ -->
   <div class="collection-header">
     <div class="collection-left">
       <div class="collection-avatar" id="headerAvatar"></div>
@@ -610,33 +617,30 @@ body {
         </div>
       </div>
     </div>
-    <div class="collection-right">
-      <div class="network-tag">On Arc</div>
-    </div>
+    <div class="network-tag">On Arc</div>
   </div>
 
-  <!-- ============ HERO ============ -->
-  <div class="top-header">
-    <h1>Meet your next<br>little obsession.</h1>
-    <div class="top-right">
-      <div class="top-right-text">
-        A tribe of pixel apes.<br>Find a home for yours.
-      </div>
-    </div>
-  </div>
-
+  <!-- ============ 2-COLUMN LAYOUT ============ -->
   <div class="layout">
 
-    <div>
+    <!-- LEFT: HERO + GALLERY -->
+    <div class="left-col">
+      <div class="hero-block">
+        <h1>Meet your next<br>little obsession.</h1>
+        <p>A tribe of pixel apes. Find a home for yours.</p>
+      </div>
+
       <div class="gallery">
         <div class="nft-grid" id="nftGrid"></div>
       </div>
+
       <div class="gallery-footer">
         <div>The ARC Ape Goblin Collection</div>
         <div>Built on Arc Network</div>
       </div>
     </div>
 
+    <!-- RIGHT: MINT CARD (aligned to top) -->
     <div class="mint-card">
 
       <div class="card-top-row">
@@ -651,10 +655,6 @@ body {
         <div class="info-cell">
           <div class="info-label">Free per wallet</div>
           <div class="info-value skeleton" id="infoFree"></div>
-        </div>
-        <div class="info-cell">
-          <div class="info-label">Max per tx</div>
-          <div class="info-value skeleton" id="infoMaxTx"></div>
         </div>
       </div>
 
@@ -802,7 +802,6 @@ const $ = (id) => document.getElementById(id);
 const nftGrid = $("nftGrid");
 const salePill = $("salePill");
 const infoFree = $("infoFree");
-const infoMaxTx = $("infoMaxTx");
 const progText = $("progText");
 const progFill = $("progFill");
 const progNote = $("progNote");
@@ -874,7 +873,7 @@ const ICONS = {
 };
 
 // ===================================================================
-// GALLERY — skeleton loading, no emoji placeholders
+// GALLERY
 // ===================================================================
 function loadImageWithFallback(tokenId, onSuccess, onAllFail) {
   let gatewayIndex = 0;
@@ -906,11 +905,9 @@ function renderGallery() {
         img.alt = `Ape #${tokenId}`;
         img.loading = "lazy";
         item.appendChild(img);
-        // Trigger fade-in
         requestAnimationFrame(() => item.classList.add("loaded"));
       },
       () => {
-        // All gateways failed — keep skeleton visible
         item.style.animation = "none";
         item.style.background = "rgba(255,255,255,0.04)";
       }
@@ -926,7 +923,6 @@ function renderGallery() {
 }
 renderGallery();
 
-// Load collection avatar (token #1) into header
 function loadHeaderAvatar() {
   loadImageWithFallback(
     1,
@@ -936,9 +932,7 @@ function loadHeaderAvatar() {
       img.alt = "Collection";
       headerAvatar.appendChild(img);
     },
-    () => {
-      // Fallback: gradient only (no emoji)
-    }
+    () => {}
   );
 }
 loadHeaderAvatar();
@@ -1100,13 +1094,9 @@ function updatePriceUI() {
   if (state.loaded) {
     infoFree.classList.remove("skeleton");
     infoFree.innerHTML = `${state.maxFreePerWallet}<span class="sub">per wallet</span>`;
-    infoMaxTx.classList.remove("skeleton");
-    infoMaxTx.innerHTML = `${state.maxMintsPerTx}<span class="sub">per tx</span>`;
   } else {
     infoFree.classList.add("skeleton");
     infoFree.innerHTML = "";
-    infoMaxTx.classList.add("skeleton");
-    infoMaxTx.innerHTML = "";
   }
 
   if (!state.loaded) {
